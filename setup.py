@@ -1,16 +1,20 @@
 import os
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
-version = "1.3.4.dev0"
+VERSION = "1.3.4.dev0"
+
+with open("README.md", "r", encoding="utf-8") as f:
+    long_description = f.read()
+
+with open(os.path.join("docs", "HISTORY.txt"), "r", encoding="utf-8") as f:
+    history = f.read()
 
 setup(
     name="banking.statements.osuuspankki",
-    version=version,
+    version=VERSION,
     description="Account statement reader plugin for Osuuspankki of Finland",
-    long_description=open("README.md").read()
-    + "\n"
-    + open(os.path.join("docs", "HISTORY.txt")).read(),
+    long_description=long_description + "\n" + history,
     classifiers=[
         "Programming Language :: Python",
         "Development Status :: 4 - Beta",

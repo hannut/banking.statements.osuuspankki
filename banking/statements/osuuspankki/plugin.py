@@ -1,28 +1,25 @@
 # -*- encoding: utf-8 -*-
-import csv
-import decimal
-import sys
-from importlib import import_module
-from io import StringIO
 
-from ofxstatement.plugin import Plugin, PluginNotRegistered
+from ofxstatement.plugin import Plugin
 
 from .parser import SIGNATURES, OPCsvStatementParser
 
 
-class OPPlugin(Plugin):
+class OPPlugin(Plugin):  # pylint: disable=too-few-public-methods
     "Suomen Osuuspankki / Finnish Osuuspankki"
 
-    def get_parser(self, fin):
-        f = open(fin, "r", encoding="utf-8")
-        signature = f.readline().strip()
-        f.seek(0)
-        if signature in SIGNATURES:
-            parser = OPCsvStatementParser(f)
-            parser.statement.account_id = self.settings["account"]
-            parser.statement.currency = self.settings["currency"]
-            parser.statement.bank_id = self.settings.get("bank", "Osuuspankki")
-            return parser
+    def get_parser(self, filename):
+        with open(filename, "r", encoding="utf-8") as file:
+            signature = file.readline().strip()
+            file.seek(0)
+            if signature in SIGNATURES:
+                parser = OPCsvStatementParser(file)
+                parser.statement.account_id = self.settings["account"]
+                parser.statement.currency = self.settings["currency"]
+                parser.statement.bank_id = self.settings.get("bank", "Osuuspankki")
+                return parser
 
-        # no plugin with matching signature was found
-        raise Exception("No suitable Osuuspankki parser found for this statement file.")
+        # If no plugin with matching signature was found
+        raise ValueError(
+            "No suitable Osuuspankki parser found for this statement file."
+        )

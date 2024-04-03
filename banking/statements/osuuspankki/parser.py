@@ -1,5 +1,4 @@
 import csv
-import types
 from io import StringIO
 
 from ofxstatement.parser import CsvStatementParser
@@ -26,24 +25,19 @@ Saaja/Maksaja;Saajan tilinumero;Viite;Viesti;Arkistotunnus;",
 Saajan tilinumero ja pankin BIC;Viite;Viesti;Arkistointitunnus;",
     "Kirjauspäivä;Arvopäivä;Määrä EUROA;Laji;Selitys;Saaja/Maksaja;\
 Saajan tilinumero ja pankin BIC;Viite;Viesti;Arkistointitunnus",
-    '"Kirjauspäivä";"Arvopäivä";"Määrä EUROA";"Laji";"Selitys";"Saaja/Maksaja";"Saajan tilinumero";"Saajan pankin BIC";"Viite";"Viesti";"Arkistointitunnus"',
+    '"Kirjauspäivä";"Arvopäivä";"Määrä EUROA";"Laji";"Selitys";"Saaja/Maksaja";\
+"Saajan tilinumero";"Saajan pankin BIC";"Viite";"Viesti";"Arkistointitunnus"',
 )
 
 
-class CustomStatementLine(StatementLine):
+class CustomStatementLine(StatementLine):  # pylint: disable=too-few-public-methods
     "don't print the check number"
 
     def __str__(self):
-        return """
-        ID: %s, date: %s, amount: %s, payee: %s
-        memo: %s
-        """ % (
-            self.id,
-            self.date,
-            self.amount,
-            self.payee,
-            self.memo,
-        )
+        return f"""
+          ID: {self.id}, date: {self.date}, amount: {self.amount}, payee: {self.payee}
+          memo: {self.memo}
+          """
 
 
 class OPCsvStatementParser(CsvStatementParser):
@@ -64,9 +58,9 @@ class OPCsvStatementParser(CsvStatementParser):
 
     def __init__(self, fin):
         sin = StringIO()
-        for l in fin:
+        for line in fin:
             # Some versions from 2011 have broken CSV...
-            sin.write(l.replace("&amp;amp;", "&"))
+            sin.write(line.replace("&amp;amp;", "&"))
         sin.seek(0)
         super().__init__(sin)
 
@@ -76,8 +70,7 @@ class OPCsvStatementParser(CsvStatementParser):
     def parse_value(self, value, field):
         if field == "bank_account_to":
             return BankAccount("", value)
-        else:
-            return super().parse_value(value, field)
+        return super().parse_value(value, field)
 
     def parse_record(self, line):
         # Free Headerline
@@ -94,7 +87,7 @@ class OPCsvStatementParser(CsvStatementParser):
         for field, col in self.mappings.items():
             if col >= len(line):
                 raise ValueError(
-                    "Cannot find column %s in line of %s items " % (col, len(line))
+                    f"Cannot find column {col} in line of {len(line)} items"
                 )
             rawvalue = line[col]
             value = self.parse_value(rawvalue, field)
