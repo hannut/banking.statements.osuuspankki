@@ -24,6 +24,7 @@ TRANSACTION_TYPES = {
     "ARVOPAPERI": "OTHER",
     "TALLETUSAUTOM.": "XFER",
     "PKORTTINOSTO": "ATM",
+    "LUOTON NOSTO": "XFER",
 }
 
 #   Other types available: 'CREDIT', 'DEBIT', 'INT', 'DIV', 'FEE', 'DEP',
