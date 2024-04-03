@@ -23,6 +23,7 @@ TRANSACTION_TYPES = {
     "PALKKA": "DIRECTDEP",
     "ARVOPAPERI": "OTHER",
     "TALLETUSAUTOM.": "XFER",
+    "PKORTTINOSTO": "ATM",
 }
 
 #   Other types available: 'CREDIT', 'DEBIT', 'INT', 'DIV', 'FEE', 'DEP',
